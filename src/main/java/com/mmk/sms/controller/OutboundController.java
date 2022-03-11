@@ -8,6 +8,9 @@ import com.mmk.sms.service.SMSService;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Refill;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -21,6 +24,7 @@ import java.util.Optional;
 /**
  * @author: Nathan
  */
+@ApiOperation(value = "/Outbound/sms", tags = "Outbound Controller")
 @RestController
 @RequestMapping("outbound/sms")
 @RequiredArgsConstructor
@@ -38,6 +42,14 @@ public class OutboundController {
      * called before the POST outbound/sms, of course after signing in first.
      * @return
      */
+    @ApiOperation(value = "generate-token", response = ErrorResponse.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "SUCCESS", response = ErrorResponse.class),
+            @ApiResponse(code = 400, message = "BAD REQUEST", response = ErrorResponse.class),
+            @ApiResponse(code = 401, message = "UNAUTHORIZED"),
+            @ApiResponse(code = 403, message = "FORBIDDEN"),
+            @ApiResponse(code = 404, message = "NOT FOUND", response = ErrorResponse.class)
+    })
     @GetMapping("/generate-token")
     public ResponseEntity<String> generateToken(){
         Refill refill = Refill.of(5, Duration.ofMinutes(1));
@@ -47,6 +59,14 @@ public class OutboundController {
         return new ResponseEntity<String>("Generated Successfully: "+bucket.toString(), HttpStatus.OK);
     }
 
+    @ApiOperation(value = "SendOutboundSMS", response = ErrorResponse.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "SUCCESS", response = ErrorResponse.class),
+            @ApiResponse(code = 400, message = "BAD REQUEST", response = ErrorResponse.class),
+            @ApiResponse(code = 401, message = "UNAUTHORIZED"),
+            @ApiResponse(code = 403, message = "FORBIDDEN"),
+            @ApiResponse(code = 404, message = "NOT FOUND", response = ErrorResponse.class)
+    })
     @PostMapping
     public ResponseEntity<?> send(@Valid @RequestBody SMS sms){
         log.info("Inside outbound/sms");

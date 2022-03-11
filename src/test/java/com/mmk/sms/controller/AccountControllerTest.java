@@ -20,9 +20,6 @@ import static org.mockito.Mockito.verify;
 public class AccountControllerTest {
 
     @Autowired
-    private TestRestTemplate restTemplate;
-
-    @Autowired
     private JwtRequestHelper jwtRequestHelper;
 
     @Autowired
